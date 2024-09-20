@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redundant File Cleaner</title>
+    <link rel="stylesheet" href="./src/index.css">
+  </head>
+  <body>
+    <div class="app-main">
+
+      <div class="app-logo">
+        <h1>Welcome! Let's clean your duplicates</h1>
+      </div>
+
+      <div class="app-content">
+        <div class="app-content-item" id="app-paths">
+          <ul id="paths-list" onscroll="HandleScroll()">
+            <li class="selected">ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+            <li>ha</li>
+
+
+          </ul>
+          <div>
+            <button class="app-button">dodaj</button>
+            <button class="app-button">usun</button>
+          </div>
+        </div>
+        <div class="app-content-item app-regex">
+          <textarea id="regex-textarea"></textarea>
+        </div>
+      </div>
+
+      <div class="app-operators">
+        <div class="app-operators-info">
+          <p class="app-info app-run">next run: 00:00:00</p>
+          <p class="app-info app-status">Status: Dziala</p>
+        </div>
+
+        <div class="app-operators-buttons">
+          <button class="app-button app-start">Start</button>
+          <button class="app-button app-refresh">Refresh</button>
+        </div>
+        <div class="app-operators-messages">
+          <span>Message:</span>
+          <pre id="message">info content...</pre>
+        </div>
+      </div>
+
+    </div>
+  </body>
+<script>
+// Variables Section
+  let list = null;
+//End of Variables Section
+
+// Main Section
+  InitView()
+//End of Main Section
+
+// Funcs Section
+
+  function InitView(){
+
+    document.onload = () => {
+      list = document.getElementById("paths-list")
+    }
+
+    document.querySelectorAll("#paths-list li").forEach(elem => {
+      elem.addEventListener("click", (elem) => HandleItemSelect(elem))
+      console.log("element set-up")
+    })
+
+    HandleScroll();
+  }
+  function HandleScroll(){
+      if(list == null){
+        list = document.getElementById("paths-list")
+      }
+      if(list.offsetHeight < list.scrollHeight){
+        if((list.scrollTop + list.offsetHeight) > list.scrollHeight* (9.5/10)){
+          list.setAttribute("class", "top-scroll-list")
+        }else{
+          list.setAttribute("class", "down-scroll-list")
+        }
+      }
+
+  }
+function GetSelectedItem(){
+    return document.querySelector("#paths-list .selected")
+}
+function HandleItemSelect(event){
+  document.querySelectorAll("#paths-list li").forEach((elem) => elem.setAttribute("class" ,""))
+  let target = event.target
+  target.setAttribute("class", "selected")
+}
+function LoadData(){
+
+  }
+// End of Funcs Section
+
+</script>
+</html>

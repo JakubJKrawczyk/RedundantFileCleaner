@@ -1,0 +1,160 @@
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+.app-main{
+  width: 95vw;
+  height: 90vh;
+  margin-left:auto;
+  margin-right:auto;
+}
+.app-logo{
+  text-align: center;
+}
+
+.app-content{
+  height: 70%;
+  background-color: #323232;
+  border-radius: 10px;
+  color:white;
+  padding:10px;
+}
+.app-content-item{
+  width: 40vw;
+  height:95%;
+  float:left;
+
+}
+.app-paths{
+float:left;
+}
+#paths-list{
+  list-style: none;
+  width:90%;
+  height:90%;
+  scroll-behavior: unset;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  scrollbar-arrow-color: #ffff;
+  scrollbar-gutter: auto;
+  scroll-snap-align: center;
+}
+#paths-list li{
+  padding: 5px 0 5px 20px;
+  width: 100%;
+  height:30px;
+  line-height:30px;
+  margin-left:-30px;
+}
+
+#paths-list li:hover{
+  background: #989797;
+
+}
+
+#paths-list .selected{
+  background: #989797;
+
+}
+
+.down-scroll-list{
+  border-bottom: 5px solid #f3f3f3;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+.top-scroll-list{
+  border-top: 5px solid #f3f3f3;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+.app-regex{
+float:right;
+  margin-right:30px;
+}
+#regex-textarea{
+  width:100%;
+  height:100%;
+  background: #f3f3f3;
+  border: 2px solid #c5c5c5;
+  border-radius:4px;
+  padding:10px;
+  resize: none;
+}
+.app-operators{
+  width:100%;
+  height: 120px;
+  margin-top:20px;
+  border-radius: 5px;
+  background-color: #f3f3f3;
+}
+.app-operators-buttons{
+  width:400px;
+  height:50px;
+  float:left;
+  text-align:center;
+  line-height: 50px;
+  margin-top:30px;
+}
+.app-operators-info{
+  float:left;
+  width:50%;
+  height:40px;
+  line-height:10px;
+}
+.app-operators-messages{
+  margin-top:-30px;
+  width:350px;
+  padding-left:10px;
+  float:right;
+  height:110px;
+}
+.app-operators-messages span{
+  background-color:#3c3c3c;
+  width:95%;
+  color:white;
+  padding:3px;
+  border-radius:5px;
+  display:block;
+}
+.app-info{
+  float:left;
+  display:block;
+}
+.app-info:nth-of-type(1){
+  margin-left:10px;
+
+}
+.app-button{
+  width:80px;
+  height: 25px;
+  border-radius: 5px;
+  background: #1e1e1e;
+  color:white;
+  border:none;
+  transition: 0.1s;
+}
+.app-button:hover{
+  background: #3c3c3c;
+}
+.app-run{
+font-size:18px;
+  float:left;
+}
+.app-status{
+font-size:18px;
+  float:right;
+  margin-right:100px;
+}
+.app-start{
+float:none;
+}
+.app-refresh{
+float:none;
+}
+#message{
+  height:60px;
+  width:340px;
+  overflow-y:scroll;
+  overflow-x: unset;
+  text-wrap: wrap;
+  margin-top:3px;
+}

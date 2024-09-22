@@ -3,56 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <title>Redundant File Cleaner</title>
+    <script src="./Assets/alertifyjs/alertify.js" type="text/javascript"></script>
+    <script src="src/js/MessageLogger.ts" type="text/javascript"></script>
+    <script src="/src/js/models/regexmodel.ts" ></script>
     <link rel="stylesheet" href="./src/index.css">
+    <link rel="stylesheet" href="./Assets/alertifyjs/css/alertify.css">
+    <link rel="stylesheet" href="./Assets/alertifyjs/css/themes/semantic.rtl.css">
   </head>
   <body>
     <div class="app-main">
 
       <div class="app-logo">
-        <h1>Welcome! Let's clean your duplicates</h1>
+        <h1>Witaj! To czas na porzadki.</h1>
       </div>
 
       <div class="app-content">
         <div class="app-content-item" id="app-paths">
           <ul id="paths-list" onscroll="HandleScroll()">
-            <li class="selected">ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-            <li>ha</li>
-
-
           </ul>
           <div>
-            <button class="app-button">dodaj</button>
-            <button class="app-button">usun</button>
+            <button class="app-button" onclick="addPath()">dodaj</button>
+            <button class="app-button" onclick="removePath()">usun</button>
           </div>
         </div>
         <div class="app-content-item app-regex">
@@ -63,7 +34,7 @@
       <div class="app-operators">
         <div class="app-operators-info">
           <p class="app-info app-run">next run: 00:00:00</p>
-          <p class="app-info app-status">Status: Dziala</p>
+          <p class="app-info app-status">Status: <span id="status">Dziala</span></p>
         </div>
 
         <div class="app-operators-buttons">
@@ -71,8 +42,8 @@
           <button class="app-button app-refresh">Refresh</button>
         </div>
         <div class="app-operators-messages">
-          <span>Message:</span>
-          <pre id="message">info content...</pre>
+          <span>Zdarzenia:</span>
+          <pre id="message">brak zdarzen...</pre>
         </div>
       </div>
 
@@ -80,7 +51,11 @@
   </body>
 <script>
 // Variables Section
-  let list = null;
+let list = null;
+let regexes = []
+const filePath = "./regex.json"
+const MessageElement = document.getElementById('message');
+
 //End of Variables Section
 
 // Main Section
@@ -101,6 +76,9 @@
     })
 
     HandleScroll();
+    LoadData()
+    Log("Update Data not implemented")
+    alertify.success("Aplikacja gotowa do uzycia")
   }
   function HandleScroll(){
       if(list == null){
@@ -118,15 +96,131 @@
 function GetSelectedItem(){
     return document.querySelector("#paths-list .selected")
 }
+
+async function addPath(){
+
+    const folderPath = await window.electronAPI.openFolderDialog()
+  if(folderPath){
+    let contains = false
+    list.childNodes.forEach(node => {
+      if(node.textContent === folderPath){
+        alertify.error("Sciezka juz istnieje")
+        contains = true
+      }
+    } )
+    if(contains) return
+    alertify.success("Ok: " + folderPath)
+    let elementToAdd = document.createElement("li")
+    elementToAdd.textContent = folderPath
+    elementToAdd.addEventListener("click", (elem) => HandleItemSelect(elem))
+    if(list.children.length === 0) HandleSelect(elementToAdd)
+    list.appendChild(elementToAdd)
+    regexes.push({"path": folderPath, "regex": ""})
+    HandleSelect(elementToAdd)
+    console.log(regexes)
+  }else{
+    alertify.error("Operacja przerwana!")
+  }
+}
+function removePath(){
+    let path = GetSelectedItem()
+    let list = document.querySelector("#paths-list")
+    let itemToSelect = null
+    if(list.children.length !== 0){
+      let i = 0
+      for(let item of list.children){
+        if(item.className === "selected") break
+        i++
+      }
+      if( i === 0 && list.children.length > 1){
+        itemToSelect = list.children.item(i + 1)
+      }else if(i === list.children.length-1 && list.children.length > 1) itemToSelect = list.children.item(i - 1)
+      else itemToSelect = list.children.item(i+1)
+
+      HandleSelect(itemToSelect)
+      regexes = regexes.filter(item => item.path !== path.textContent)
+      console.log(regexes)
+      alertify.success("Sciezka usunieta: " + path.textContent)
+      path.remove()
+    }
+  }
 function HandleItemSelect(event){
   document.querySelectorAll("#paths-list li").forEach((elem) => elem.setAttribute("class" ,""))
   let target = event.target
   target.setAttribute("class", "selected")
+  let textArea = document.querySelector("#regex-textarea")
+
+  textArea.textContent = regexes.find(elem => elem.path === target.textContent).regex
 }
-function LoadData(){
+
+function HandleSelect(item){
+  document.querySelectorAll("#paths-list li").forEach((elem) => elem.setAttribute("class" ,""))
+
+  item.setAttribute("class", "selected")
+  let textArea = document.querySelector("#regex-textarea")
+
+  textArea.textContent = regexes.find(elem => elem.path === item.textContent).regex
+}
+function UpdateData(){
 
   }
 // End of Funcs Section
 
+
+// DATA OPERATOR
+function LoadData() {
+  if (CheckIfFileExists()) {
+    try {
+      regexes = window.electronAPI.read(filePath, "json")
+      let deserialized = JSON.parse(regexes)
+      regexes = deserialized
+      console.log(deserialized)
+      for(let reg of regexes){
+        let item = document.createElement("li")
+        item.textContent = reg.path
+        item.addEventListener("click", (elem) => {
+          HandleItemSelect(elem)
+        })
+        if(list === null) console.log("mnie tu nie ma")
+        list.appendChild(item)
+
+      }
+      HandleSelect(document.querySelector("#paths-list li"))
+      alertify.notify("Dane Zaczytane!(not implemented)")
+    } catch (er) {
+      alertify.error(er.message);
+
+
+    }
+  } else {
+    alertify.notify("Towrze nowy plik zapisu szablonow")
+    window.electronAPI.write(filePath, regexes)
+    alertify.success("Utworzono!")
+  }
+}
+
+function CheckIfFileExists() {
+  const file = window.electronAPI.exists(filePath)
+
+  if(file){
+    alertify.success("Plik szablonow znaleziony!")
+    return true
+  }else{
+    alertify.error("Plik szablonow nie istnieje!")
+    return false
+  }
+}
+// END OF DATA OPERATOR
+
+// MESSAGE LOGGER
+
+function Log(message){
+  alertify.warning("Nowe zdarzenie w systemie!")
+  MessageElement.textContent = message;
+}
+function Default(){
+  MessageElement.textContent = 'Brak zdarzen...';
+}
+// END OF MESSAGE LOGGER
 </script>
 </html>

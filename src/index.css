@@ -124,6 +124,7 @@ float:right;
 
 }
 .app-button{
+  cursor: pointer;
   width:80px;
   height: 25px;
   border-radius: 5px;
@@ -134,6 +135,9 @@ float:right;
 }
 .app-button:hover{
   background: #3c3c3c;
+}
+.app-button:active{
+  background: #8c8c8c;
 }
 .app-run{
 font-size:18px;
